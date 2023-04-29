@@ -1,0 +1,120 @@
+import '/flutter_flow/flutter_flow_animations.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/mainpage_copy/mainpage_copy_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import 'onboarding1_model.dart';
+export 'onboarding1_model.dart';
+
+class Onboarding1Widget extends StatefulWidget {
+  const Onboarding1Widget({Key? key}) : super(key: key);
+
+  @override
+  _Onboarding1WidgetState createState() => _Onboarding1WidgetState();
+}
+
+class _Onboarding1WidgetState extends State<Onboarding1Widget>
+    with TickerProviderStateMixin {
+  late Onboarding1Model _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => Onboarding1Model());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: Color(0xFF1E2429),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF4B39EF), Color(0xFFEE8B60)],
+            stops: [0, 1],
+            begin: AlignmentDirectional(1, -1),
+            end: AlignmentDirectional(-1, 1),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.network(
+              'https://upload.wikimedia.org/wikipedia/en/3/38/Habib_University.jpg',
+              width: 140,
+              height: 140,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
+              child: Text(
+                'Login Successful\nWelcome to E-Habib',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).displaySmall.override(
+                      fontFamily: 'Lexend Deca',
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+              child: FFButtonWidget(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 500),
+                      reverseDuration: Duration(milliseconds: 500),
+                      child: MainpageCopyWidget(),
+                    ),
+                  );
+                },
+                text: 'Enter',
+                options: FFButtonOptions(
+                  width: 130,
+                  height: 31.6,
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                  iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                  color: FlutterFlowTheme.of(context).alternate,
+                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        fontFamily: 'Poppins',
+                        color: FlutterFlowTheme.of(context).secondary,
+                      ),
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

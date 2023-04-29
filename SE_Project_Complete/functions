@@ -1,0 +1,66 @@
+import 'dart:convert';
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'lat_lng.dart';
+import 'place.dart';
+import '../backend/backend.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../auth/firebase_auth/auth_util.dart';
+
+double sumarSubtotal(
+  double valorSubtotal,
+  double precio,
+) {
+  valorSubtotal = valorSubtotal + precio;
+  return valorSubtotal;
+}
+
+double restarSubtotal(
+  double valorSubtotal,
+  double precio,
+) {
+  if (valorSubtotal > 0) {
+    valorSubtotal = valorSubtotal - precio;
+  }
+  return valorSubtotal;
+}
+
+double totalList(List<double> subTotal) {
+  {
+    // get the total value
+    double total = 0;
+    for (double add in subTotal) {
+      total += add;
+    }
+
+    return total;
+  }
+}
+
+double calcularSubtotal(
+  double precio,
+  int cantidad,
+) {
+  return precio * cantidad;
+}
+
+double taxfunction(double subtotal) {
+  double tax = 0.17;
+  double tax_money = subtotal * tax;
+  tax_money = double.parse(tax_money.toStringAsFixed(2));
+  return tax_money;
+
+//
+}
+
+double finalfunction(
+  double baseprice,
+  double tax,
+) {
+  double total = baseprice + tax;
+  return total;
+}

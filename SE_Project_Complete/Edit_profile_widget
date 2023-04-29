@@ -1,0 +1,503 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
+import '/backend/firebase_storage/storage.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/upload_data.dart';
+import '/forgetpassword/forgetpassword_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import 'edit_profile_model.dart';
+export 'edit_profile_model.dart';
+
+class EditProfileWidget extends StatefulWidget {
+  const EditProfileWidget({Key? key}) : super(key: key);
+
+  @override
+  _EditProfileWidgetState createState() => _EditProfileWidgetState();
+}
+
+class _EditProfileWidgetState extends State<EditProfileWidget> {
+  late EditProfileModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => EditProfileModel());
+
+    _model.yourNameController ??=
+        TextEditingController(text: currentUserDisplayName);
+    _model.phoneNumberController ??=
+        TextEditingController(text: currentPhoneNumber);
+    _model.myBioController ??= TextEditingController(
+        text: valueOrDefault(currentUserDocument?.bio, ''));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: AppBar(
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 14, 0, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.arrow_back_sharp,
+                          color: FlutterFlowTheme.of(context).accent1,
+                          size: 34,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                        child: Text(
+                          'Edit Profile',
+                          style: FlutterFlowTheme.of(context)
+                              .headlineMedium
+                              .override(
+                                fontFamily: 'Lexend Deca',
+                                color: FlutterFlowTheme.of(context).primary,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [],
+          centerTitle: true,
+          elevation: 0,
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDBE2E7),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+                    child: AuthUserStreamWidget(
+                      builder: (context) => Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.network(
+                          valueOrDefault<String>(
+                            currentUserPhoto,
+                            'data:image/jpeg;base64,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QrfnxJuNDbS3iauE50t10pR4nU2aNr+AJB8iKe7N2aWbPItgOCnj5npXNPnlyKTVJF5TXYwUjlSc/wBXzqdn2OjcLj5j561FbQwRjZLm4JNvS1SjicZcv1FjNMa4svkbIVDci3ujhcnwtemeTFkaS4axGhEcnxHfpXa4lMTiJUYkOCGYjQg8LA3N+WnnTLZ0OJTs7RwKtlDr2rnSwuQMllfnobHW/WkS03r8lCUIbIAxBbugkcCdL26Uq0QPIV4m4HzFKZx1Hxok5KK4mCZw61z6MOppXOOo+NdQFtFBPkDWLJl92Aj9GHU/KlMPgM5soueeug86kMJspm1fujoDqf6VLwwqososK6MayPcmycsldDfAYBYxpxPE9f6CnlFFXIt2dooooMCiiigAooooAKKKKACiiigAooooAKKKKAOWotXaKAOVCbwavGOgY/G39Km6gdrozzhUW5CjyFyTc0sk2mkPDsYk2Gug1odCAGKMqng1v8t61NYHZKrZnOdv5R5D9afugIsQCDxFTjhSWx3k9ipSnr535G2tWVMBGdcg+dMMbsa1zF6oeHpTzY0pMYDAhl7pB46cPlVIwpUZOVq0LpgoxwRfhSwUCu0VtIlZ2iiitAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK8gV2igDtFFFABXLUUUAdooooAKKKKACiiigAooooAKKKKACiiigD/2Q==',
+                          ),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FFButtonWidget(
+                    onPressed: () async {
+                      final selectedMedia = await selectMedia(
+                        mediaSource: MediaSource.photoGallery,
+                        multiImage: false,
+                      );
+                      if (selectedMedia != null &&
+                          selectedMedia.every((m) =>
+                              validateFileFormat(m.storagePath, context))) {
+                        setState(() => _model.isDataUploading = true);
+                        var selectedUploadedFiles = <FFUploadedFile>[];
+                        var downloadUrls = <String>[];
+                        try {
+                          showUploadMessage(
+                            context,
+                            'Uploading file...',
+                            showLoading: true,
+                          );
+                          selectedUploadedFiles = selectedMedia
+                              .map((m) => FFUploadedFile(
+                                    name: m.storagePath.split('/').last,
+                                    bytes: m.bytes,
+                                    height: m.dimensions?.height,
+                                    width: m.dimensions?.width,
+                                    blurHash: m.blurHash,
+                                  ))
+                              .toList();
+
+                          downloadUrls = (await Future.wait(
+                            selectedMedia.map(
+                              (m) async =>
+                                  await uploadData(m.storagePath, m.bytes),
+                            ),
+                          ))
+                              .where((u) => u != null)
+                              .map((u) => u!)
+                              .toList();
+                        } finally {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          _model.isDataUploading = false;
+                        }
+                        if (selectedUploadedFiles.length ==
+                                selectedMedia.length &&
+                            downloadUrls.length == selectedMedia.length) {
+                          setState(() {
+                            _model.uploadedLocalFile =
+                                selectedUploadedFiles.first;
+                            _model.uploadedFileUrl = downloadUrls.first;
+                          });
+                          showUploadMessage(context, 'Success!');
+                        } else {
+                          setState(() {});
+                          showUploadMessage(context, 'Failed to upload data');
+                          return;
+                        }
+                      }
+                    },
+                    text: 'Change Photo',
+                    options: FFButtonOptions(
+                      width: 130,
+                      height: 40,
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      color: Color(0xFFF1F4F8),
+                      textStyle:
+                          FlutterFlowTheme.of(context).bodyMedium.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Color(0xFF4B39EF),
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
+                      elevation: 1,
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+              child: AuthUserStreamWidget(
+                builder: (context) => TextFormField(
+                  controller: _model.yourNameController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    labelStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    hintText: 'Enter Name',
+                    hintStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFF1F4F8),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsetsDirectional.fromSTEB(20, 24, 0, 24),
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Lexend Deca',
+                        color: Color(0xFF090F13),
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                  maxLines: null,
+                  validator:
+                      _model.yourNameControllerValidator.asValidator(context),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 12),
+              child: AuthUserStreamWidget(
+                builder: (context) => TextFormField(
+                  controller: _model.phoneNumberController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    labelStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    hintText: 'Enter Phone Number',
+                    hintStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFF1F4F8),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsetsDirectional.fromSTEB(20, 24, 0, 24),
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Lexend Deca',
+                        color: Color(0xFF090F13),
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                  maxLines: null,
+                  validator: _model.phoneNumberControllerValidator
+                      .asValidator(context),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 12),
+              child: AuthUserStreamWidget(
+                builder: (context) => TextFormField(
+                  controller: _model.myBioController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    labelStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    hintText: 'Enter Bio',
+                    hintStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Color(0xFF95A1AC),
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFF1F4F8),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0x00000000),
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        EdgeInsetsDirectional.fromSTEB(20, 24, 0, 24),
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Lexend Deca',
+                        color: Color(0xFF090F13),
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                  textAlign: TextAlign.start,
+                  maxLines: 3,
+                  validator:
+                      _model.myBioControllerValidator.asValidator(context),
+                ),
+              ),
+            ),
+            Align(
+              alignment: AlignmentDirectional(0, 0.05),
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
+                child: FFButtonWidget(
+                  onPressed: () async {
+                    final usersUpdateData = createUsersRecordData(
+                      displayName: _model.yourNameController.text,
+                      photoUrl: _model.uploadedFileUrl,
+                      phoneNumber: _model.phoneNumberController.text,
+                      bio: _model.myBioController.text,
+                    );
+                    await currentUserReference!.update(usersUpdateData);
+                    Navigator.pop(context);
+                  },
+                  text: 'Save Changes',
+                  options: FFButtonOptions(
+                    width: 340,
+                    height: 60,
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    color: Color(0xFF0909A7),
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Lexend Deca',
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                    elevation: 2,
+                    borderSide: BorderSide(
+                      color: FlutterFlowTheme.of(context).primary,
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+              child: FFButtonWidget(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForgetpasswordWidget(),
+                    ),
+                  );
+                },
+                text: 'Reset Password',
+                options: FFButtonOptions(
+                  width: 340,
+                  height: 40,
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                  iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                  color: Color(0xFF0909A7),
+                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.white,
+                      ),
+                  borderSide: BorderSide(
+                    color: FlutterFlowTheme.of(context).primary,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
